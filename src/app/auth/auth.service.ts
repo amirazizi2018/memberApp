@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, InjectionToken } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { Router } from '@angular/router';
+import { STORAGE } from '../../app/app.config';
 
 @Injectable({
     providedIn: 'root',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
 export class AuthService {
     private tokenKey = 'auth-token';
 
-    constructor(private http: HttpClient, private storage: Storage, private router: Router) {
+    constructor(private http: HttpClient, @Inject(STORAGE) private storage: Storage, private router: Router) {
         this.storage.create();
     }
 
