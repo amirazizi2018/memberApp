@@ -20,14 +20,21 @@ export class LoginPage {
   constructor(private authService: AuthService, private router: Router) {}
 
   submitLogin() {
+    console.log(this.username, this.password);
     this.authService.login(this.username, this.password).subscribe({
       next: async (res) => {
-        await this.authService.saveToken(res.token);
+        const token = res.data.token;
+        const userInfo = res.data.userInfo;
+
+        await this.authService.saveToken(token);
+        await this.authService.saveUserInfo(userInfo); // اضافه کردن این خط
+
         this.router.navigate(['/resolutions']);
       },
       error: () => {
         this.error = 'نام کاربری یا رمز عبور اشتباه است';
       },
     });
+
   }
 }

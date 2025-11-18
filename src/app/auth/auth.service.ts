@@ -2,22 +2,37 @@ import { Injectable, Inject, InjectionToken } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { Router } from '@angular/router';
-import { STORAGE } from '../../app/app.config';
+import { STORAGE } from '../app.config';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
     private tokenKey = 'auth-token';
+    private userKey = 'user-info';
+
 
     constructor(private http: HttpClient, @Inject(STORAGE) private storage: Storage, private router: Router) {
         this.storage.create();
     }
 
     login(username: string, password: string) {
-        return this.http.post<{ token: string }>('https://your-api.com/v1/auth/login', {
-            username,
+        return this.http.post<{
+            message: string;
+            data: {
+                token: string;
+                userInfo: {
+                    id: string;
+                    firstName: string;
+                    lastName: string;
+                    email: string;
+                    role: string;
+                };
+            };
+        }>('http://localhost:5258/api/auth/login', {
+            email: username,
             password,
+            role:"member"
         });
     }
 
@@ -29,6 +44,15 @@ export class AuthService {
         return await this.storage.get(this.tokenKey);
     }
 
+    async saveUserInfo(userInfo: any) {
+        await this.storage.set(this.userKey, userInfo);
+    }
+
+    async getUserInfo(): Promise<any> {
+        return await this.storage.get(this.userKey);
+    }
+
+
     async isLoggedIn(): Promise<boolean> {
         const token = await this.getToken();
         return !!token;
@@ -36,6 +60,8 @@ export class AuthService {
 
     async logout() {
         await this.storage.remove(this.tokenKey);
+        await this.storage.remove(this.userKey);
         this.router.navigate(['/login']);
     }
+
 }

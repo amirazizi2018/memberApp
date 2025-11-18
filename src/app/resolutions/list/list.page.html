@@ -1,13 +1,48 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>list</ion-title>
+    <ion-title>مصوبات من</ion-title>
+      <ion-buttons slot="end">
+          <ion-text class="ion-padding-end">
+              {{ userFullName }}
+          </ion-text>
+      </ion-buttons>
+      <ion-buttons slot="end" class="ion-padding-end">
+          <ion-button fill="clear" (click)="logout()">
+              <ion-icon name="log-out-outline" slot="icon-only" style="transform: rotate(180deg)"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">list</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+    <ion-list>
+        <ion-item *ngFor="let res of resolutions">
+            <ion-label class="ion-text-wrap">
+                <h2>{{ res.title }}</h2>
+                <p>درصد پیشرفت: {{ res.progress }}٪</p>
+            </ion-label>
+
+            <ion-input
+                    type="number"
+                    min="0"
+                    max="100"
+                    [(ngModel)]="res.progress"
+                    placeholder="درصد جدید"
+                    style="width: 80px; margin-inline-start: 10px"
+            ></ion-input>
+
+            <ion-button size="small" (click)="updateProgress(res)">ثبت</ion-button>
+        </ion-item>
+    </ion-list>
 </ion-content>
+
+
+<!--<ion-content [fullscreen]="true">-->
+<!--  <ion-header collapse="condense">-->
+<!--    <ion-toolbar>-->
+<!--      <ion-title size="large">list</ion-title>-->
+<!--    </ion-toolbar>-->
+<!--  </ion-header>-->
+<!--</ion-content>-->

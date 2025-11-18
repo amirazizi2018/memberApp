@@ -17,9 +17,12 @@
 
     <ion-button expand="block" (click)="submitLogin()">ورود</ion-button>
 
-    <ion-text color="danger" *ngIf="error">
-        <p>{{ error }}</p>
-    </ion-text>
+    @if (error) {
+        <ion-text color="danger">
+            <p>{{ error }}</p>
+        </ion-text>
+    }
+
 </ion-content>
 
 
