@@ -18,23 +18,26 @@
 
 <ion-content class="ion-padding">
     <ion-list>
-        <ion-item *ngFor="let res of resolutions">
-            <ion-label class="ion-text-wrap">
-                <h2>{{ res.title }}</h2>
-                <p>درصد پیشرفت: {{ res.progress }}٪</p>
-            </ion-label>
+        @for (res of resolutions; track res.id) {
+            <ion-item>
+                <ion-label class="ion-text-wrap">
+                    <h2>{{ res.title }}</h2>
+                    <p>درصد پیشرفت: {{ res.progress }}٪</p>
+                </ion-label>
 
-            <ion-input
-                    type="number"
-                    min="0"
-                    max="100"
-                    [(ngModel)]="res.progress"
-                    placeholder="درصد جدید"
-                    style="width: 80px; margin-inline-start: 10px"
-            ></ion-input>
+                <ion-input
+                        type="number"
+                        min="0"
+                        max="100"
+                        [(ngModel)]="res.progress"
+                        placeholder="درصد جدید"
+                        style="width: 80px; margin-inline-start: 10px"
+                ></ion-input>
 
-            <ion-button size="small" (click)="updateProgress(res)">ثبت</ion-button>
-        </ion-item>
+                <ion-button size="small" (click)="updateProgress(res)">ثبت</ion-button>
+            </ion-item>
+        }
+
     </ion-list>
 </ion-content>
 
