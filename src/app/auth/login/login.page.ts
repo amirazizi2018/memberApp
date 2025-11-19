@@ -1,40 +1,40 @@
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { Component } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs'
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
-  standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule],
+    selector: 'app-login',
+    standalone: true,
+    imports: [CommonModule, IonicModule, FormsModule],
+    templateUrl: './login.page.html',
+    styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
-  username = '';
-  password = '';
-  error = '';
+    private authService = inject(AuthService);
+    private router = inject(Router);
 
-  constructor(private authService: AuthService, private router: Router) {}
+    username = '';
+    password = '';
+    error = '';
 
-  submitLogin() {
-    console.log(this.username, this.password);
-    this.authService.login(this.username, this.password).subscribe({
-      next: async (res) => {
-        const token = res.data.token;
-        const userInfo = res.data.userInfo;
+    async submitLogin() {
+        try {
+            const res = await firstValueFrom(this.authService.login(this.username, this.password))
+            const token = res.data.token;
+            const userInfo = res.data.userInfo;
 
-        await this.authService.saveToken(token);
-        await this.authService.saveUserInfo(userInfo); // اضافه کردن این خط
+            await this.authService.saveToken(token);
+            await this.authService.saveUserInfo(userInfo);
 
-        this.router.navigate(['/resolutions']);
-      },
-      error: () => {
-        this.error = 'نام کاربری یا رمز عبور اشتباه است';
-      },
-    });
-
-  }
+            this.router.navigate(['/resolutions']);
+        } catch (err: any) {
+            this.error =
+                err?.error?.message ||
+                (Array.isArray(err?.error?.errors) ? err.error.errors[0] : 'خطا در ورود به حساب');
+        }
+    }
 }

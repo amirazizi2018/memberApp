@@ -2,7 +2,7 @@ import { ApplicationConfig, InjectionToken } from '@angular/core';
 import { PreloadAllModules, provideRouter, RouteReuseStrategy, withPreloading } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
-import { provideStorage, Storage } from '@ionic/storage-angular';
+import { Storage } from '@ionic/storage-angular';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { Drivers } from '@ionic/storage';
 
@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
         {
             provide: STORAGE,
             useFactory: () => {
-                const storage = new Storage({ 
+                const storage = new Storage({
                     name: '__mydb',
                     driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
                 });

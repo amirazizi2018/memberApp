@@ -1,21 +1,43 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { Resolution } from './resolution.model';
+import { AuthService } from '../auth/auth.service'
 
 @Injectable({
     providedIn: 'root',
 })
 export class ResolutionService {
-    private baseUrl = 'http://localhost:5258/api/resolutions';
+    private baseUrl = 'http://localhost:5258/api/resolution';
+    private http = inject(HttpClient);
+    private authService = inject(AuthService);
 
-    constructor(private http: HttpClient) {}
 
-    getUserResolutions(): Observable<Resolution[]> {
-        return this.http.get<Resolution[]>(this.baseUrl);
+    async getUserResolutions(): Promise<Resolution[]> {
+        const token = await this.authService.getToken();
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+
+        const request$: Observable<{ data: Resolution[] }> =
+            this.http.get<{ data: Resolution[] }>(`${this.baseUrl}/user`, { headers });
+
+        const response = await firstValueFrom(request$);
+        return response.data;
     }
 
-    updateProgress(id: string, progress: number): Observable<any> {
-        return this.http.put(`${this.baseUrl}/${id}/progress`, { progress });
+
+
+
+    async updateProgress(id: string, progressPercent: number): Promise<any> {
+        const token = await this.authService.getToken();
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+
+        return firstValueFrom(
+            this.http.put(`${this.baseUrl}/${id}/progress`, { progressPercent }, { headers })
+        );
     }
+
 }

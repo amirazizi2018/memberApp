@@ -21,18 +21,28 @@
         @for (res of resolutions; track res.id) {
             <ion-item>
                 <ion-label class="ion-text-wrap">
-                    <h2>{{ res.title }}</h2>
-                    <p>درصد پیشرفت: {{ res.progress }}٪</p>
+                    <h2>{{ res.content }}</h2>
+                    <p>مهلت: {{ res.deadline | date:'yyyy/MM/dd' }}</p>
+                    <p>درصد پیشرفت: {{ res.progressPercent }}٪</p>
+                    <ion-progress-bar
+                            [value]="res.progressPercent / 100"
+                            color="tertiary"
+                            style="margin-top: 4px; height: 8px;"
+                    ></ion-progress-bar>
+
                 </ion-label>
 
-                <ion-input
-                        type="number"
-                        min="0"
-                        max="100"
-                        [(ngModel)]="res.progress"
-                        placeholder="درصد جدید"
-                        style="width: 80px; margin-inline-start: 10px"
-                ></ion-input>
+                <ion-item style="width: 120px; margin-inline-start: 10px">
+                    <ion-icon name="trending-up-outline" slot="start"></ion-icon>
+                    <ion-input
+                            type="number"
+                            min="0"
+                            max="100"
+                            [(ngModel)]="res.progressPercent"
+                            placeholder="٪ جدید"
+                    ></ion-input>
+                </ion-item>
+
 
                 <ion-button size="small" (click)="updateProgress(res)">ثبت</ion-button>
             </ion-item>

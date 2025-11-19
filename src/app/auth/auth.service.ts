@@ -1,18 +1,22 @@
-import { Injectable, Inject, InjectionToken } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Storage } from '@ionic/storage-angular';
 import { Router } from '@angular/router';
+
 import { STORAGE } from '../app.config';
+import { UserInfo } from '../core/models/user-info.model'
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
+    private http = inject(HttpClient);
+    private storage = inject(STORAGE);
+    private router = inject(Router);
+
     private tokenKey = 'auth-token';
     private userKey = 'user-info';
 
-
-    constructor(private http: HttpClient, @Inject(STORAGE) private storage: Storage, private router: Router) {
+    constructor() {
         this.storage.create();
     }
 
@@ -21,22 +25,16 @@ export class AuthService {
             message: string;
             data: {
                 token: string;
-                userInfo: {
-                    id: string;
-                    firstName: string;
-                    lastName: string;
-                    email: string;
-                    role: string;
-                };
+                userInfo: UserInfo;
             };
         }>('http://localhost:5258/api/auth/login', {
             email: username,
             password,
-            role:"member"
+            role: 'member',
         });
     }
 
-    async saveToken(token: string) {
+    async saveToken(token: string): Promise<void> {
         await this.storage.set(this.tokenKey, token);
     }
 
@@ -44,24 +42,22 @@ export class AuthService {
         return await this.storage.get(this.tokenKey);
     }
 
-    async saveUserInfo(userInfo: any) {
+    async saveUserInfo(userInfo: UserInfo): Promise<void> {
         await this.storage.set(this.userKey, userInfo);
     }
 
-    async getUserInfo(): Promise<any> {
+    async getUserInfo(): Promise<UserInfo | null> {
         return await this.storage.get(this.userKey);
     }
-
 
     async isLoggedIn(): Promise<boolean> {
         const token = await this.getToken();
         return !!token;
     }
 
-    async logout() {
+    async logout(): Promise<void> {
         await this.storage.remove(this.tokenKey);
         await this.storage.remove(this.userKey);
         this.router.navigate(['/login']);
     }
-
 }
