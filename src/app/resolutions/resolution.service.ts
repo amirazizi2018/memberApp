@@ -3,15 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { Resolution } from './resolution.model';
 import { AuthService } from '../auth/auth.service'
+import { environment } from '../../environments/environment'
 
 @Injectable({
     providedIn: 'root',
 })
 export class ResolutionService {
-    private baseUrl = 'http://localhost:5258/api/resolution';
     private http = inject(HttpClient);
     private authService = inject(AuthService);
 
+    private baseUrl = environment.apiUrl;
 
     async getUserResolutions(): Promise<Resolution[]> {
         const token = await this.authService.getToken();
@@ -20,7 +21,7 @@ export class ResolutionService {
         };
 
         const request$: Observable<{ data: Resolution[] }> =
-            this.http.get<{ data: Resolution[] }>(`${this.baseUrl}/user`, { headers });
+            this.http.get<{ data: Resolution[] }>(`${this.baseUrl}/resolution/user`, { headers });
 
         const response = await firstValueFrom(request$);
         return response.data;
@@ -36,7 +37,7 @@ export class ResolutionService {
         };
 
         return firstValueFrom(
-            this.http.put(`${this.baseUrl}/${id}/progress`, { progressPercent }, { headers })
+            this.http.put(`${this.baseUrl}/resolution/${id}/progress`, { progressPercent }, { headers })
         );
     }
 

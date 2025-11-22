@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { STORAGE } from '../app.config';
 import { UserInfo } from '../core/models/user-info.model'
+import { environment } from '../../environments/environment'
 
 @Injectable({
     providedIn: 'root',
@@ -12,6 +13,8 @@ export class AuthService {
     private http = inject(HttpClient);
     private storage = inject(STORAGE);
     private router = inject(Router);
+
+    private baseUrl = environment.apiUrl;
 
     private tokenKey = 'auth-token';
     private userKey = 'user-info';
@@ -27,7 +30,7 @@ export class AuthService {
                 token: string;
                 userInfo: UserInfo;
             };
-        }>('http://localhost:5258/api/auth/login', {
+        }>(`${this.baseUrl}/auth/login`, {
             email: username,
             password,
             role: 'member',
